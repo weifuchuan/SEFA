@@ -1,0 +1,30 @@
+{
+  "name": "SEFA",
+  "version": "3.0.0",
+  "description": "思家电商表格汇总工具",
+  "main": "main.js",
+  "author": "fuchuan",
+  "license": "MIT",
+  "scripts": {
+    "start": "npx electron .",
+    "build": "npx electron-builder"
+  },
+  "devDependencies": {
+    "electron": "2.0.2",
+    "electron-builder": "20.14.7"
+  },
+  "dependencies": {
+    "node-xlsx": "^0.21.2"
+  },
+  "build": {
+    "productName": "思家电商表格汇总工具",
+    "appId": "com.sijia.sefa",
+    "win": {
+      "target": [
+        {
+          "target": "portable"
+        }
+      ]
+    }
+  }
+}
