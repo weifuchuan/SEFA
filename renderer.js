@@ -22,42 +22,27 @@ dailyForm.addEventListener("submit", (event) => {
     (file) => file.path
   );
 
-  dialog.showOpenDialog(
+  const { result, outputFile } = ipcRenderer.sendSync(
+    "form-aggregate-files-selected",
     {
-      properties: ["openDirectory"],
-    },
-    (outputDirectory) => {
-      if (outputDirectory) {
-        const result = ipcRenderer.sendSync("form-aggregate-files-selected", {
-          windfireFiles,
-          pinduoduoFiles,
-          outputDirectory,
-        });
-
-        if (result === "success") {
-          outputDirectoryElement.textContent = outputDirectory;
-          outputDirectoryElement.parentElement.style.display = "block";
-          errorElement.style.display = "none";
-
-          alert("处理成功！");
-        } else {
-          errorElement.textContent = result;
-          errorElement.style.display = "block";
-          outputDirectoryElement.parentElement.style.display = "none";
-
-          alert(`处理失败：${result}`);
-        }
-      } else {
-        errorElement.textContent = "请选择输出目录";
-        errorElement.style.display = "block";
-        outputDirectoryElement.parentElement.style.display = "none";
-      }
+      windfireFiles,
+      pinduoduoFiles, 
     }
   );
 
-  // const outputDirectory = dialog .showOpenDialogSync({
-  //   properties: ["openDirectory"],
-  // });
+  if (result === "success") {
+    outputDirectoryElement.textContent = outputFile;
+    outputDirectoryElement.parentElement.style.display = "block";
+    errorElement.style.display = "none";
+
+    alert("处理成功！");
+  } else {
+    errorElement.textContent = result;
+    errorElement.style.display = "block";
+    outputDirectoryElement.parentElement.style.display = "none";
+
+    alert(`处理失败：${result}`);
+  }
 });
 
 wangjunForm.addEventListener("submit", async (event) => {
@@ -65,71 +50,75 @@ wangjunForm.addEventListener("submit", async (event) => {
 
   const wangjunFile = wangjunFileInput.files[0].path;
 
-  dialog.showOpenDialog(
+  const { result, outputFile } = ipcRenderer.sendSync(
+    "wangjun-form-aggregate-files-selected",
     {
-      properties: ["openDirectory"],
-    },
-    (outputDirectory) => {
-      if (outputDirectory) {
-        const result = ipcRenderer.sendSync(
-          "wangjun-form-aggregate-files-selected",
-          {
-            wangjunFile,
-            outputDirectory,
-          }
-        );
-        if (result === "success") {
-          outputDirectoryElement.textContent = outputDirectory;
-          outputDirectoryElement.parentElement.style.display = "block";
-          errorElement.style.display = "none";
-
-          alert("处理成功！");
-        } else {
-          errorElement.textContent = result;
-          errorElement.style.display = "block";
-          outputDirectoryElement.parentElement.style.display = "none";
-
-          alert(`处理失败：${result}`);
-        }
-      } else {
-        errorElement.textContent = "请选择输出目录";
-        errorElement.style.display = "block";
-        outputDirectoryElement.parentElement.style.display = "none";
-      }
+      wangjunFile,
     }
   );
+  if (result === "success") {
+    outputDirectoryElement.textContent = outputFile;
+    outputDirectoryElement.parentElement.style.display = "block";
+    errorElement.style.display = "none";
+
+    alert("处理成功！");
+  } else {
+    errorElement.textContent = result;
+    errorElement.style.display = "block";
+    outputDirectoryElement.parentElement.style.display = "none";
+
+    alert(`处理失败：${result}`);
+  }
 });
 
 wangjunWechatForm.addEventListener("submit", async (event) => {
   event.preventDefault();
-  dialog.showOpenDialog(
-    {
-      properties: ["openDirectory"],
-    },
-    (outputDirectory) => {
-      if (outputDirectory) {
-        const result = ipcRenderer.sendSync("wangjun-wechat-handle", {
-          wechat: wangjunWechatTextarea.value,
-          outputDirectory,
-        });
-        if (result === "success") {
-          outputDirectoryElement.textContent = outputDirectory;
-          outputDirectoryElement.parentElement.style.display = "block";
-          errorElement.style.display = "none";
 
-          alert("处理成功！");
-        } else {
-          errorElement.textContent = result;
-          errorElement.style.display = "block";
-          outputDirectoryElement.parentElement.style.display = "none";
+  const { result, outputFile } = ipcRenderer.sendSync("wangjun-wechat-handle", {
+    wechat: wangjunWechatTextarea.value,
+  });
+  if (result === "success") {
+    outputDirectoryElement.textContent = outputFile;
+    outputDirectoryElement.parentElement.style.display = "block";
+    errorElement.style.display = "none";
 
-          alert(`处理失败：${result}`);
-        }
-      } else {
-        errorElement.textContent = "请选择输出目录";
-        errorElement.style.display = "block";
-        outputDirectoryElement.parentElement.style.display = "none";
-      }
-    }
-  );
+    alert("处理成功！");
+  } else {
+    errorElement.textContent = result;
+    errorElement.style.display = "block";
+    outputDirectoryElement.parentElement.style.display = "none";
+
+    alert(`处理失败：${result}`);
+  }
+
+  // dialog.showOpenDialog(
+  //   {
+  //     properties: ["openDirectory"],
+  //   },
+  //   (outputDirectory) => {
+  //     if (outputDirectory) {
+  //       const result = ipcRenderer.sendSync("wangjun-wechat-handle", {
+  //         wechat: wangjunWechatTextarea.value,
+  //         outputDirectory,
+  //       });
+  //       if (result === "success") {
+  //         outputDirectoryElement.textContent = outputDirectory;
+  //         outputDirectoryElement.parentElement.style.display = "block";
+  //         errorElement.style.display = "none";
+
+  //         alert("处理成功！");
+  //       } else {
+  //         errorElement.textContent = result;
+  //         errorElement.style.display = "block";
+  //         outputDirectoryElement.parentElement.style.display = "none";
+
+  //         alert(`处理失败：${result}`);
+  //       }
+  //     } else {
+  //       errorElement.textContent = "请选择输出目录";
+  //       errorElement.style.display = "block";
+  //       outputDirectoryElement.parentElement.style.display = "none";
+  //     }
+  //   }
+  // );
 });
