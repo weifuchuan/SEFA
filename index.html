@@ -1,258 +1,302 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>思家电商表格汇总</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+      }
 
-<head>
-  <meta charset="UTF-8">
-  <title>思家电商表格汇总</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      font-size: 14px;
-    }
+      .form-container {
+        margin-bottom: 20px;
+      }
 
-    .form-container {
-      margin-bottom: 20px;
-    }
+      .form-container label {
+        display: block;
+        margin-bottom: 5px;
+      }
 
-    .form-container label {
-      display: block;
-      margin-bottom: 5px;
-    }
+      .form-container input[type="file"] {
+        margin-bottom: 10px;
+      }
 
-    .form-container input[type="file"] {
-      margin-bottom: 10px;
-    }
+      .form-container .file-list {
+        margin-bottom: 10px;
+      }
 
-    .form-container .file-list {
-      margin-bottom: 10px;
-    }
+      .form-container .file-list li {
+        margin-bottom: 5px;
+      }
 
-    .form-container .file-list li {
-      margin-bottom: 5px;
-    }
+      .form-container button[type="submit"] {
+        margin-top: 10px;
+      }
 
-    .form-container button[type="submit"] {
-      margin-top: 10px;
-    }
+      .output-container {
+        display: none;
+        margin-bottom: 20px;
+      }
 
-    .output-container {
-      display: none;
-      margin-bottom: 20px;
-    }
+      .output-container h2 {
+        margin-bottom: 10px;
+      }
 
-    .output-container h2 {
-      margin-bottom: 10px;
-    }
+      .output-container p {
+        margin-bottom: 5px;
+      }
 
-    .output-container p {
-      margin-bottom: 5px;
-    }
+      .error-message {
+        color: red;
+        font-weight: bold;
+        margin-top: 10px;
+      }
 
-    .error-message {
-      color: red;
-      font-weight: bold;
-      margin-top: 10px;
-    }
+      .tabs {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px;
+      }
 
-    .tabs {
-      display: flex;
-      justify-content: center;
-      margin-bottom: 20px;
-    }
+      .tab-btn {
+        background-color: #f1f1f1;
+        border: none;
+        outline: none;
+        cursor: pointer;
+        padding: 14px 16px;
+        transition: 0.3s;
+        font-size: 17px;
+      }
 
-    .tab-btn {
-      background-color: #f1f1f1;
-      border: none;
-      outline: none;
-      cursor: pointer;
-      padding: 14px 16px;
-      transition: 0.3s;
-      font-size: 17px;
-    }
+      .tab-btn:hover {
+        background-color: #ddd;
+      }
 
-    .tab-btn:hover {
-      background-color: #ddd;
-    }
+      .tab-btn.active {
+        background-color: #ccc;
+      }
 
-    .tab-btn.active {
-      background-color: #ccc;
-    }
+      .form-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+      }
 
-    .form-container {
-      width: 100%;
-      max-width: 600px;
-      margin: 0 auto;
-      padding: 20px;
-      background-color: #f8f9fa;
-      border: 1px solid #ced4da;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    }
+      #daily-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+      }
 
-    #daily-form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+      #daily-form div {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
 
-    #daily-form div {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+      label {
+        font-size: 16px;
+        font-weight: 500;
+      }
 
-    label {
-      font-size: 16px;
-      font-weight: 500;
-    }
+      input[type="file"] {
+        font-size: 14px;
+      }
 
-    input[type="file"] {
-      font-size: 14px;
-    }
+      button[type="submit"] {
+        background-color: #007bff;
+        color: #fff;
+        font-size: 16px;
+        font-weight: 500;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
 
-    button[type="submit"] {
-      background-color: #007bff;
-      color: #fff;
-      font-size: 16px;
-      font-weight: 500;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
+      button[type="submit"]:hover {
+        background-color: #0056b3;
+      }
 
-    button[type="submit"]:hover {
-      background-color: #0056b3;
-    }
+      .output-container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #e9ecef;
+        border: 1px solid #ced4da;
+        border-radius: 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+      }
 
-    .output-container {
-      width: 100%;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #e9ecef;
-      border: 1px solid #ced4da;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-    }
+      .output-container h2 {
+        margin-bottom: 20px;
+        font-size: 24px;
+        font-weight: 600;
+      }
 
-    .output-container h2 {
-      margin-bottom: 20px;
-      font-size: 24px;
-      font-weight: 600;
-    }
+      .error-message {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        border-radius: 5px;
+        box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
+        font-size: 16px;
+        font-weight: 500;
+        color: #721c24;
+        display: none;
+        /* 默认隐藏错误信息，当有错误时通过 JS 显示 */
+      }
+    </style>
+  </head>
 
-    .error-message {
-      width: 100%;
-      max-width: 600px;
-      margin: 20px auto;
-      padding: 20px;
-      background-color: #f8d7da;
-      border: 1px solid #f5c6cb;
-      border-radius: 5px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16), 0 3px 6px rgba(0, 0, 0, 0.23);
-      font-size: 16px;
-      font-weight: 500;
-      color: #721c24;
-      display: none;
-      /* 默认隐藏错误信息，当有错误时通过 JS 显示 */
-    }
-  </style>
-</head>
+  <body>
+    <div class="tabs">
+      <button class="tab-btn" id="tab1">每日表格汇总</button>
+      <button class="tab-btn" id="tab2">王君表格汇总</button>
+      <button class="tab-btn" id="tab3">王君微信快递信息导出表</button>
+      <button class="tab-btn" id="tab4">售后信息补充</button>
+    </div>
 
-<body>
+    <div class="form-container" id="content1">
+      <!-- <h2>每日表格汇总</h2> -->
+      <form id="daily-form">
+        <div>
+          <label for="windfire-files">风火递文件:</label>
+          <input
+            type="file"
+            id="windfire-files"
+            name="windfire-files"
+            multiple
+            accept=".xlsx,.xls"
+          />
+          <ul class="file-list"></ul>
+        </div>
+        <div>
+          <label for="pinduoduo-files">拼多多文件:</label>
+          <input
+            type="file"
+            id="pinduoduo-files"
+            name="pinduoduo-files"
+            multiple
+            accept=".xlsx,.xls"
+          />
+          <ul class="file-list"></ul>
+        </div>
+        <button type="submit">处理</button>
+      </form>
+    </div>
 
-  <div class="tabs">
-    <button class="tab-btn" id="tab1">每日表格汇总</button>
-    <button class="tab-btn" id="tab2">王君表格汇总</button>
-    <button class="tab-btn" id="tab3">王君微信快递信息导出表</button>
-  </div>
+    <div class="form-container" id="content2" style="display: none">
+      <!-- <h2>王君表格汇总</h2> -->
+      <form id="wangjun-form">
+        <div>
+          <label for="wangjun-file">风火递文件:</label>
+          <input
+            type="file"
+            id="wangjun-file"
+            name="wangjun-file"
+            accept=".xlsx,.xls"
+          />
+          <ul class="file-list"></ul>
+        </div>
+        <button type="submit">处理</button>
+      </form>
+    </div>
 
+    <div class="form-container" id="content3" style="display: none">
+      <!-- <h2>王君微信快递信息导出表</h2> -->
+      <form id="wangjun-wechat-form">
+        <div>
+          <label for="wangjun-wechat">输入:</label>
+          <textarea
+            name="wangjun-wechat"
+            id="wangjun-wechat"
+            rows="24"
+            cols="64"
+          ></textarea>
+        </div>
+        <button type="submit">处理</button>
+      </form>
+    </div>
 
-  <div class="form-container" id="content1">
-    <!-- <h2>每日表格汇总</h2> -->
-    <form id="daily-form">
-      <div>
-        <label for="windfire-files">风火递文件:</label>
-        <input type="file" id="windfire-files" name="windfire-files" multiple accept=".xlsx,.xls">
-        <ul class="file-list"></ul>
-      </div>
-      <div>
-        <label for="pinduoduo-files">拼多多文件:</label>
-        <input type="file" id="pinduoduo-files" name="pinduoduo-files" multiple accept=".xlsx,.xls">
-        <ul class="file-list"></ul>
-      </div>
-      <button type="submit">处理</button>
-    </form>
-  </div>
+    <div class="form-container" id="content4" style="display: none"> 
+      <form id="shouhou-form">
+        <div>
+          <label for="shouhou-order-file">订单表:</label>
+          <input
+            type="file"
+            id="shouhou-order-file"
+            name="shouhou-order-file
+            accept=".xlsx,.xls"
+          />
+          <label for="shouhou-file">售后表:</label>
+          <input
+            type="file"
+            id="shouhou-file"
+            name="shouhou-file
+            accept=".xlsx,.xls"
+          />
+          <label for="shouhou-fanxian-file">小额返现表:</label>
+          <input
+            type="file"
+            id="shouhou-fanxian-file"
+            name="shouhou-fanxian-file
+            accept=".xlsx,.xls,.csv"
+          />
+        </div>
+        <button type="submit">处理</button>
+      </form>
+    </div>
 
-  <div class="form-container" id="content2" style="display:none;">
-    <!-- <h2>王君表格汇总</h2> -->
-    <form id="wangjun-form">
-      <div>
-        <label for="wangjun-file">风火递文件:</label>
-        <input type="file" id="wangjun-file" name="wangjun-file" accept=".xlsx,.xls">
-        <ul class="file-list"></ul>
-      </div>
-      <button type="submit">处理</button>
-    </form>
-  </div>
+    <div class="output-container">
+      <h2>处理完成</h2>
+      <p>输出目录:</p>
+      <p id="output-directory"></p>
+    </div>
 
-  <div class="form-container" id="content3" style="display:none;">
-    <!-- <h2>王君微信快递信息导出表</h2> -->
-    <form id="wangjun-wechat-form">
-      <div>
-        <label for="wangjun-wechat">输入:</label>
-        <textarea name="wangjun-wechat" id="wangjun-wechat" rows="24" cols="64"></textarea>
-      </div>
-      <button type="submit">处理</button>
-    </form>
-  </div>
+    <div class="error-message"></div>
 
+    <script>
+      const tabButtons = document.querySelectorAll(".tab-btn");
+      const formContainers = document.querySelectorAll(".form-container");
 
-  <div class="output-container">
-    <h2>处理完成</h2>
-    <p>输出目录:</p>
-    <p id="output-directory"></p>
-  </div>
+      tabButtons.forEach((tabButton) => {
+        tabButton.addEventListener("click", () => {
+          const contentId = "content" + tabButton.id.replace("tab", "");
 
-  <div class="error-message"></div>
+          // 隐藏所有表单容器
+          formContainers.forEach((formContainer) => {
+            formContainer.style.display = "none";
+          });
 
-  <script>
-    const tabButtons = document.querySelectorAll('.tab-btn');
-    const formContainers = document.querySelectorAll('.form-container');
+          // 移除所有选项卡按钮的激活状态
+          tabButtons.forEach((tabBtn) => {
+            tabBtn.classList.remove("active");
+          });
 
-    tabButtons.forEach((tabButton) => {
-      tabButton.addEventListener('click', () => {
-        const contentId = 'content' + tabButton.id.replace('tab', '');
+          // 显示选中的表单容器
+          document.getElementById(contentId).style.display = "block";
 
-        // 隐藏所有表单容器
-        formContainers.forEach((formContainer) => {
-          formContainer.style.display = 'none';
+          // 为选中的选项卡按钮添加激活状态
+          tabButton.classList.add("active");
         });
-
-        // 移除所有选项卡按钮的激活状态
-        tabButtons.forEach((tabBtn) => {
-          tabBtn.classList.remove('active');
-        });
-
-        // 显示选中的表单容器
-        document.getElementById(contentId).style.display = 'block';
-
-        // 为选中的选项卡按钮添加激活状态
-        tabButton.classList.add('active');
       });
-    });
 
-    // 默认激活第一个选项卡
-    tabButtons[0].click();
+      // 默认激活第一个选项卡
+      tabButtons[0].click();
+    </script>
 
-
-  </script>
-
-  <script src="./renderer.js"></script>
-
-</body>
-
+    <script src="./renderer.js"></script>
+  </body>
 </html>

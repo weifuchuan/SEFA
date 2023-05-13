@@ -2,6 +2,7 @@ const { app, ipcMain, BrowserWindow, shell, dialog } = require("electron");
 // const remoteMain = require("@electron/remote/main");
 const fs = require("fs");
 const xlsx = require("node-xlsx");
+const XLSX = require("xlsx");
 // remoteMain.initialize();
 // if (require('electron-squirrel-startup')) app.quit();
 const createWindow = () => {
@@ -26,7 +27,7 @@ app.on("ready", async () => {
 });
 // app.whenReady().then(() => {
 //   createWindow();
-// });
+// });ssd
 
 ipcMain.on("form-aggregate-files-selected", (event, data) => {
   const { windfireFiles, pinduoduoFiles } = data;
@@ -445,3 +446,105 @@ function decompose(string) {
 
   return compose;
 }
+ipcMain.on("shouhou-handle", (event, _data) => {
+  const { shouhouOrder, shouhouFileList, shouhouFanxianFileList } = _data;
+  const filename = shouhouOrder;
+
+  const orderID_shouhou = {}
+  // xlsx
+  //   .parse(shouhou)[0]
+  //   .data.slice(1)
+  //   .reduce((map, row) => {
+  //     map[row[1]] = row;
+  //   }, {});
+  const orderID_fanxian = {}
+  // xlsx
+  //   .parse(shouhouFanxian)[0]
+  //   .data.slice(1)
+  //   .reduce((map, row) => {
+  //     map[row[0]] = row;
+  //   }, {});
+
+  shouhouFileList.forEach(file=>{
+    const workSheets = xlsx.parse(file);
+    const workSheet = workSheets[0].data;
+    workSheet.slice(1).forEach((row, i) => {
+      orderID_shouhou[row[1]]=row
+    })
+  })
+
+  shouhouFanxianFileList.forEach(file=>{
+    const workSheets = xlsx.parse(file);
+    const workSheet = workSheets[0].data;
+    workSheet.slice(5).forEach((row, i) => {
+      orderID_fanxian[row[0]]=row
+    })
+  })
+
+  dialog.showSaveDialog({ defaultPath: filename }, (filename) => {
+    // const workbook = XLSX.readFile(shouhouOrder);
+    // const sheet = workbook.Sheets[workbook.SheetNames[0]];
+
+    const workSheets = xlsx.parse(shouhouOrder);
+    const workSheet = workSheets[0].data;
+    workSheet.forEach((row, i) => {
+      if (i === 0) {
+        row.push("售后", "返现");
+        // sheet[XLSX.utils.encode_cell({ c: row.length, r: i })] = {
+        //   t: "s",
+        //   v: "售后",
+        // };
+        // sheet[XLSX.utils.encode_cell({ c: row.length + 1, r: i })] = {
+        //   t: "s",
+        //   v: "返现",
+        // };
+      } else {
+        if (orderID_shouhou[row[1]]) {
+          row.push(
+            `退款金额：${orderID_shouhou[row[1]][7]}；原因：；售后状态：${
+              orderID_shouhou[row[1]][15]
+            }`
+          );
+          // sheet[XLSX.utils.encode_cell({ c: row.length, r: i })] = {
+          //   t: "s",
+          //   v: `退款金额：${orderID_shouhou[row[1]][7]}；原因：；售后状态：${
+          //     orderID_shouhou[row[1]][15]
+          //   }`,
+          // };
+        } else {
+          row.push("");
+          // sheet[XLSX.utils.encode_cell({ c: row.length, r: i })] = {
+          //   t: "s",
+          //   v: "",
+          // };
+        }
+        if (orderID_fanxian[row[1]]) {
+          row.push(orderID_fanxian[row[1]][3]);
+          // sheet[XLSX.utils.encode_cell({ c: row.length + 1, r: i })] = {
+          //   t: "n",
+          //   v: orderID_fanxian[row[1]][3],
+          // };
+        } else {
+          row.push("");
+          // sheet[XLSX.utils.encode_cell({ c: row.length + 1, r: i })] = {
+          //   t: "s",
+          //   v: "",
+          // };
+        }
+      }
+    });
+
+    try {
+      // XLSX.writeFile(workbook, filename);
+      const buffer = xlsx.build([{ name: "Sheet1", data: workSheet }]);
+      fs.writeFileSync(filename, buffer);
+      shell.openItem(filename);
+      event.returnValue = { result: "success", outputFile: filename };
+    } catch (err) {
+      console.error(err);
+      event.returnValue = {
+        result: "程序出错，检查" + filename + "是否被占用",
+      };
+    }
+  });
+});

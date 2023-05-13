@@ -11,6 +11,10 @@ const outputDirectoryElement = document.getElementById("output-directory");
 const errorElement = document.querySelector(".error-message");
 const wangjunWechatForm = document.getElementById("wangjun-wechat-form");
 const wangjunWechatTextarea = document.getElementById("wangjun-wechat");
+const shouhouForm = document.getElementById("shouhou-form");
+const shouhouOrderFile = document.getElementById("shouhou-order-file");
+const shouhouFile = document.getElementById("shouhou-file");
+const shouhouFanXianFile = document.getElementById("shouhou-fanxian-file");
 
 dailyForm.addEventListener("submit", (event) => {
   event.preventDefault();
@@ -26,7 +30,7 @@ dailyForm.addEventListener("submit", (event) => {
     "form-aggregate-files-selected",
     {
       windfireFiles,
-      pinduoduoFiles, 
+      pinduoduoFiles,
     }
   );
 
@@ -90,35 +94,35 @@ wangjunWechatForm.addEventListener("submit", async (event) => {
 
     alert(`处理失败：${result}`);
   }
+});
 
-  // dialog.showOpenDialog(
-  //   {
-  //     properties: ["openDirectory"],
-  //   },
-  //   (outputDirectory) => {
-  //     if (outputDirectory) {
-  //       const result = ipcRenderer.sendSync("wangjun-wechat-handle", {
-  //         wechat: wangjunWechatTextarea.value,
-  //         outputDirectory,
-  //       });
-  //       if (result === "success") {
-  //         outputDirectoryElement.textContent = outputDirectory;
-  //         outputDirectoryElement.parentElement.style.display = "block";
-  //         errorElement.style.display = "none";
+shouhouForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
 
-  //         alert("处理成功！");
-  //       } else {
-  //         errorElement.textContent = result;
-  //         errorElement.style.display = "block";
-  //         outputDirectoryElement.parentElement.style.display = "none";
+  const shouhouOrder = shouhouOrderFile.files[0].path;
+  const shouhouFileList = Array.from(shouhouFile.files).map(
+    (file) => file.path
+  );
+  const shouhouFanxianFileList = Array.from(shouhouFanXianFile).map(
+    (file) => file.path
+  );
 
-  //         alert(`处理失败：${result}`);
-  //       }
-  //     } else {
-  //       errorElement.textContent = "请选择输出目录";
-  //       errorElement.style.display = "block";
-  //       outputDirectoryElement.parentElement.style.display = "none";
-  //     }
-  //   }
-  // );
+  const { result, outputFile } = ipcRenderer.sendSync("shouhou-handle", {
+    shouhouOrder,
+    shouhouFileList,
+    shouhouFanxianFileList,
+  });
+  if (result === "success") {
+    outputDirectoryElement.textContent = outputFile;
+    outputDirectoryElement.parentElement.style.display = "block";
+    errorElement.style.display = "none";
+
+    alert("处理成功！");
+  } else {
+    errorElement.textContent = result;
+    errorElement.style.display = "block";
+    outputDirectoryElement.parentElement.style.display = "none";
+
+    alert(`处理失败：${result}`);
+  }
 });
