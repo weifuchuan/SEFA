@@ -3,6 +3,7 @@ const { app, ipcMain, BrowserWindow, shell, dialog } = require("electron");
 const fs = require("fs");
 const xlsx = require("node-xlsx");
 const XLSX = require("xlsx");
+const csv = require('csv-parser');
 // remoteMain.initialize();
 // if (require('electron-squirrel-startup')) app.quit();
 const createWindow = () => {
@@ -446,18 +447,18 @@ function decompose(string) {
 
   return compose;
 }
-ipcMain.on("shouhou-handle", (event, _data) => {
+ipcMain.on("shouhou-handle", async (event, _data) => {
   const { shouhouOrder, shouhouFileList, shouhouFanxianFileList } = _data;
   const filename = shouhouOrder;
 
-  const orderID_shouhou = {}
+  const orderID_shouhou = {};
   // xlsx
   //   .parse(shouhou)[0]
   //   .data.slice(1)
   //   .reduce((map, row) => {
   //     map[row[1]] = row;
   //   }, {});
-  const orderID_fanxian = {}
+  const orderID_fanxian = {};
   // xlsx
   //   .parse(shouhouFanxian)[0]
   //   .data.slice(1)
@@ -465,29 +466,47 @@ ipcMain.on("shouhou-handle", (event, _data) => {
   //     map[row[0]] = row;
   //   }, {});
 
-  shouhouFileList.forEach(file=>{
+  shouhouFileList.forEach((file) => {
     const workSheets = xlsx.parse(file);
     const workSheet = workSheets[0].data;
     workSheet.slice(1).forEach((row, i) => {
-      orderID_shouhou[row[1]]=row
-    })
-  })
+      orderID_shouhou[row[1]] = row;
+    });
+  });
 
-  shouhouFanxianFileList.forEach(file=>{
+  // for (let i = 0; i < shouhouFanxianFileList.length; i++) {
+  //   const file = shouhouFanxianFileList[i];
+  //   const workSheet = await readCsvFile(file);
+  //   workSheet.slice(5).forEach((row, i) => {
+  //     orderID_fanxian[row[0]] = row;
+  //   });
+  // }
+
+  // console.log(orderID_fanxian)
+
+  shouhouFanxianFileList.forEach((file) => {
     const workSheets = xlsx.parse(file);
     const workSheet = workSheets[0].data;
     workSheet.slice(5).forEach((row, i) => {
-      orderID_fanxian[row[0]]=row
-    })
-  })
+      orderID_fanxian[row[0]] = row;
+    });
+  });
 
   dialog.showSaveDialog({ defaultPath: filename }, (filename) => {
     // const workbook = XLSX.readFile(shouhouOrder);
     // const sheet = workbook.Sheets[workbook.SheetNames[0]];
 
     const workSheets = xlsx.parse(shouhouOrder);
-    const workSheet = workSheets[0].data;
-    workSheet.forEach((row, i) => {
+    const data = workSheets[0].data;
+
+    let maxLength = Math.max(...data.map((row) => row.length));
+    data.forEach((row) => {
+      while (row.length < maxLength) {
+        row.push("");
+      }
+    });
+
+    data.forEach((row, i) => {
       if (i === 0) {
         row.push("售后", "返现");
         // sheet[XLSX.utils.encode_cell({ c: row.length, r: i })] = {
@@ -536,7 +555,7 @@ ipcMain.on("shouhou-handle", (event, _data) => {
 
     try {
       // XLSX.writeFile(workbook, filename);
-      const buffer = xlsx.build([{ name: "Sheet1", data: workSheet }]);
+      const buffer = xlsx.build(workSheets);
       fs.writeFileSync(filename, buffer);
       shell.openItem(filename);
       event.returnValue = { result: "success", outputFile: filename };
@@ -548,3 +567,14 @@ ipcMain.on("shouhou-handle", (event, _data) => {
     }
   });
 });
+
+async function readCsvFile(filePath) {
+  const results = [];
+  return new Promise((resolve, reject) => {
+    fs.createReadStream(filePath)
+      .pipe(csv())
+      .on("data", (data) => results.push(Object.values(data)))
+      .on("end", () => resolve(results))
+      .on("error", (error) => reject(error));
+  });
+}

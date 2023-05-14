@@ -103,7 +103,7 @@ shouhouForm.addEventListener("submit", async (event) => {
   const shouhouFileList = Array.from(shouhouFile.files).map(
     (file) => file.path
   );
-  const shouhouFanxianFileList = Array.from(shouhouFanXianFile).map(
+  const shouhouFanxianFileList = Array.from(shouhouFanXianFile.files).map(
     (file) => file.path
   );
 

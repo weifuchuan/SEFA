@@ -1,6 +1,6 @@
 {
   "name": "SEFA",
-  "version": "4.1.0",
+  "version": "5.0.0",
   "description": "思家电商表格汇总工具",
   "main": "main.js",
   "author": "fuchuan",
@@ -14,6 +14,7 @@
     "electron-builder": "20.14.7"
   },
   "dependencies": {
+    "csv-parser": "^3.0.0",
     "node-xlsx": "^0.21.2"
   },
   "build": {
